@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Chat - النظام العالمي للمراسلة الفورية</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        wa: {
+                            darkBg: '#111b21',
+                            darkPanel: '#202c33',
+                            darkChat: '#0b141a',
+                            darkHover: '#2a3942',
+                            darkInput: '#2a3942',
+                            green: '#00a884',
+                            lightGreen: '#25d366',
+                            bubbleOut: '#005c4b',
+                            bubbleIn: '#202c33',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(150, 150, 150, 0.2); border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(150, 150, 150, 0.4); }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-[#0c1317] text-slate-800 dark:text-slate-100 font-sans h-screen flex overflow-hidden antialiased">
+
+    <!-- الحاوية الرئيسية لتطبيق المحادثة -->
+    <div class="flex w-full h-full max-w-[1600px] mx-auto shadow-2xl border-x border-slate-300 dark:border-neutral-800">
+        
+        <!-- ================= الشريط الجانبي وجهات الاتصال ================= -->
+        <aside class="w-full md:w-[380px] lg:w-[420px] bg-white dark:bg-wa-darkPanel border-l border-slate-200 dark:border-neutral-800 flex flex-col h-full z-20">
+            
+            <!-- رأس الشريط الجانبي (الملف الشخصي والأزرار) -->
+            <div class="h-16 px-4 bg-slate-50 dark:bg-[#202c33] border-b border-slate-200 dark:border-neutral-800 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center font-bold text-white text-sm shadow-md cursor-pointer hover:opacity-90 transition">
+                        م
+                    </div>
+                    <span class="font-bold text-sm tracking-wide">محمد المبرمج</span>
+                </div>
+                <div class="flex items-center gap-3 text-slate-500 dark:text-slate-300 text-lg">
+                    <button class="p-2 hover:bg-slate-200 dark:hover:bg-wa-darkHover rounded-full transition" title="حالة المحادثات"><i class="fa-solid fa-circle-notch"></i></button>
+                    <button class="p-2 hover:bg-slate-200 dark:hover:bg-wa-darkHover rounded-full transition" title="محادثة جديدة"><i class="fa-regular fa-comment-dots"></i></button>
+                    <button id="theme-toggle" class="p-2 hover:bg-slate-200 dark:hover:bg-wa-darkHover rounded-full transition" title="تبديل المظهر"><i class="fa-solid fa-moon dark:hidden"></i><i class="fa-solid fa-sun hidden dark:inline"></i></button>
+                </div>
+            </div>
+
+            <!-- شريط البحث الفوري -->
+            <div class="p-2.5 bg-white dark:bg-wa-darkPanel border-b border-slate-100 dark:border-neutral-800">
+                <div class="flex items-center bg-slate-100 dark:bg-wa-darkInput rounded-xl px-3 py-1.5 border border-transparent focus-within:border-emerald-500 transition">
+                    <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs ml-3"></i>
+                    <input type="text" placeholder="بحث أو بدء محادثة جديدة..." class="w-full bg-transparent border-none outline-none text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400">
+                </div>
+            </div>
+
+            <!-- قائمة المحادثات (Chats List) -->
+            <div class="flex-1 overflow-y-auto divide-y divide-slate-100 dark:divide-neutral-800/40">
+                
+                <!-- محادثة نشطة محددة -->
+                <div class="flex items-center gap-3 px-4 py-3 bg-slate-100/80 dark:bg-wa-darkHover cursor-pointer transition">
+                    <div class="relative flex-shrink-0">
+                        <div class="w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-base shadow">
+                            أس
+                        </div>
+                        <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-wa-darkPanel rounded-full"></span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between mb-1">
+                            <h4 class="font-bold text-sm text-slate-900 dark:text-slate-100 truncate">أحمد البرمجة والتطوير</h4>
+                            <span class="text-[11px] text-emerald-500 font-medium">10:42 ص</span>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 truncate flex items-center gap-1">
+                            <i class="fa-solid fa-check-double text-emerald-500 text-[10px]"></i>
+                            ممتاز جداً، الكود يعمل بكفاءة عالية!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- محادثة ثانية -->
+                <div class="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-wa-darkHover/60 cursor-pointer transition">
+                    <div class="relative flex-shrink-0">
+                        <div class="w-12 h-12 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-base shadow">
+                            ف
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between mb-1">
+                            <h4 class="font-bold text-sm text-slate-900 dark:text-slate-100 truncate">فريق التطوير التقني</h4>
+                            <span class="text-[11px] text-slate-400">أمس</span>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 truncate">سارة: هل انتهيتم من ربط الـ API الجديد؟</p>
+                    </div>
+                    <div class="bg-emerald-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow">
+                        3
+                    </div>
+                </div>
+
+                <!-- محادثة ثالثة -->
+                <div class="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-wa-darkHover/60 cursor-pointer transition">
+                    <div class="relative flex-shrink-0">
+                        <div class="w-12 h-12 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold text-base shadow">
+                            خ
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between mb-1">
+                            <h4 class="font-bold text-sm text-slate-900 dark:text-slate-100 truncate">خالد الذكاء الاصطناعي</h4>
+                            <span class="text-[11px] text-slate-400">الإثنين</span>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 truncate">تم إرسال الملف المطلوب بنجاح.</p>
+                    </div>
+                </div>
+
+            </div>
+        </aside>
+
+        <!-- ================= منطقة المحادثة الرئيسية ================= -->
+        <main class="flex-1 flex flex-col h-full bg-slate-50 dark:bg-wa-darkChat relative">
+            
+            <!-- خلفية مموجة شبيهة بواتساب ويب -->
+            <div class="absolute inset-0 opacity-[0.03] dark:opacity-[0.02] pointer-events-none bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px]"></div>
+
+            <!-- رأس المحادثة (Chat Header) -->
+            <header class="h-16 px-4 bg-slate-50 dark:bg-wa-darkPanel border-b border-slate-200 dark:border-neutral-800 flex items-center justify-between z-10">
+                <div class="flex items-center gap-3.5 cursor-pointer">
+                    <div class="relative">
+                        <div class="w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-sm shadow">
+                            أس
+                        </div>
+                        <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-wa-darkPanel rounded-full"></span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-slate-900 dark:text-slate-100">أحمد البرمجة والتطوير</h3>
+                        <p class="text-[11px] text-emerald-500 font-medium">متصل الآن</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 text-slate-500 dark:text-slate-300 text-lg">
+                    <button class="p-2 hover:bg-slate-200 dark:hover:bg-wa-darkHover rounded-full transition" title="مكالمة فيديو"><i class="fa-solid fa-video"></i></button>
+                    <button class="p-2 hover:bg-slate-200 dark:hover:bg-wa-darkHover rounded-full transition" title="مكالمة صوتية"><i class="fa-solid fa-phone"></i></button>
+                    <span class="w-[1px] h-5 bg-slate-300 dark:bg-neutral-700"></span>
+                    <button class="p-2 hover:bg-slate-200 dark:hover:bg-wa-darkHover rounded-full transition" title="بحث في المحادثة"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <button class="p-2 hover:bg-slate-200 dark:hover:bg-wa-darkHover rounded-full transition" title="خيارات إضافية"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                </div>
+            </header>
+
+            <!-- صندوق عرض الرسائل (Messages Container) -->
+            <div id="chat-messages" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 z-10">
+                
+                <!-- تاريخ رسائل سابقة -->
+                <div class="flex justify-center my-2">
+                    <span class="bg-slate-200/80 dark:bg-wa-darkPanel text-slate-600 dark:text-slate-300 text-[11px] px-3 py-1 rounded-lg shadow-sm">اليوم</span>
+                </div>
+
+                <!-- رسالة واردة (من الطرف الآخر) -->
+                <div class="flex items-end gap-2 max-w-lg animate-fade-in">
+                    <div class="bg-white dark:bg-wa-bubbleIn text-slate-800 dark:text-slate-100 rounded-2xl rounded-br-sm px-4 py-2.5 text-sm shadow-sm relative leading-relaxed">
+                        <p>أهلاً بك يا محمد! هل أنهيت تصميم واجهة تطبيق المحادثة الجديدة بالمعايير العالمية؟</p>
+                        <div class="flex items-center justify-end gap-1 mt-1">
+                            <span class="text-[10px] text-slate-400">10:35 ص</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- رسالة صادرة (من المستخدم الحالي) -->
+                <div class="flex items-end gap-2 max-w-lg mr-auto flex-row-reverse animate-fade-in">
+                    <div class="bg-emerald-700 dark:bg-wa-bubbleOut text-white rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm shadow-sm relative leading-relaxed">
+                        <p>نعم بالكامل! لقد قمت بتصميمها لتكون مطابقة لـ واتساب ويب مع دعم الوضع الليلي الكامل والرسائل التفاعلية.</p>
+                        <div class="flex items-center justify-end gap-1 mt-1">
+                            <span class="text-[10px] text-emerald-200">10:40 ص</span>
+                            <i class="fa-solid fa-check-double text-sky-400 text-[10px]"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- رسالة واردة مع كود برمجي منسق -->
+                <div class="flex items-end gap-2 max-w-xl animate-fade-in">
+                    <div class="bg-white dark:bg-wa-bubbleIn text-slate-800 dark:text-slate-100 rounded-2xl rounded-br-sm px-4 py-3 text-sm shadow-sm relative leading-relaxed space-y-2">
+                        <p>عظيم جداً، تفضل هذه الملاحظة البرمجية للتأكد من ربط الحSocket لاحقاً:</p>
+                        <div class="bg-slate-900 rounded-xl p-3 text-xs font-mono text-emerald-400 overflow-x-auto border border-neutral-800">
+                            <code>const socket = io('https://api.nexus-chat.com');</code>
+                        </div>
+                        <div class="flex items-center justify-end gap-1">
+                            <span class="text-[10px] text-slate-400">10:42 ص</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- صندوق إدخال الرسائل (Chat Input Footer) -->
+            <div class="p-3 bg-slate-50 dark:bg-wa-darkPanel border-t border-slate-200 dark:border-neutral-800 z-10">
+                <form id="chat-form" class="flex items-center gap-2 max-w-5xl mx-auto">
+                    <!-- أزرار الإضافات -->
+                    <div class="flex items-center gap-1 text-slate-500 dark:text-slate-400 text-lg">
+                        <button type="button" class="p-2.5 hover:bg-slate-200 dark:hover:bg-wa-darkHover rounded-full transition" title="الرموز التعبيرية"><i class="fa-regular fa-face-smile"></i></button>
+                        <button type="button" class="p-2.5 hover:bg-slate-200 dark:hover:bg-wa-darkHover rounded-full transition" title="إرفاق ملف أو صورة"><i class="fa-solid fa-paperclip"></i></button>
+                    </div>
+
+                    <!-- حقل الكتابة الذكي -->
+                    <div class="flex-1 bg-white dark:bg-wa-darkInput rounded-xl px-4 py-2 border border-slate-200 dark:border-transparent focus-within:border-emerald-500 transition shadow-sm">
+                        <input 
+                            id="user-input"
+                            type="text" 
+                            placeholder="اكتب رسالة..." 
+                            class="w-full bg-transparent border-none outline-none text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400"
+                            autocomplete="off"
+                        >
+                    </div>
+
+                    <!-- زر الإرسال أو الميكروفون -->
+                    <button type="submit" class="w-11 h-11 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full flex items-center justify-center transition shadow-md flex-shrink-0">
+                        <i class="fa-solid fa-paper-plane text-sm"></i>
+                    </button>
+                </form>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- JavaScript للتفاعل الفوري -->
+    <script>
+        const chatForm = document.getElementById('chat-form');
+        const userInput = document.getElementById('user-input');
+        const chatMessages = document.getElementById('chat-messages');
+        const themeToggleBtn = document.getElementById('theme-toggle');
+
+        // نظام تبديل الوضع الليلي والنهاري
+        themeToggleBtn.addEventListener('click', () => {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+        }
+
+        // إرسال الرسالة وإضافتها ديناميكياً
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            // إضافة رسالة المستخدم
+            const userMsgHTML = `
+                <div class="flex items-end gap-2 max-w-lg mr-auto flex-row-reverse animate-fade-in">
+                    <div class="bg-emerald-700 dark:bg-wa-bubbleOut text-white rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm shadow-sm relative leading-relaxed">
+                        <p>${escapeHTML(text)}</p>
+                        <div class="flex items-center justify-end gap-1 mt-1">
+                            <span class="text-[10px] text-emerald-200">${timeNow}</span>
+                            <i class="fa-solid fa-check text-sky-300 text-[10px]"></i>
+                        </div>
+                    </div>
+                </div>
+            `;
+            chatMessages.insertAdjacentHTML('beforeend', userMsgHTML);
+            userInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // محاكاة رد تلقائي بعد ثдинаء (لتجربة المحادثة الحية)
+            setTimeout(() => {
+                const replyHTML = `
+                    <div class="flex items-end gap-2 max-w-lg animate-fade-in">
+                        <div class="bg-white dark:bg-wa-bubbleIn text-slate-800 dark:text-slate-100 rounded-2xl rounded-br-sm px-4 py-2.5 text-sm shadow-sm relative leading-relaxed">
+                            <p>لقد استلمت رسالتك بنجاح: "${escapeHTML(text)}". الواجهة تعمل بكفاءة تامة وبأعلى المعايير!</p>
+                            <div class="flex items-center justify-end gap-1 mt-1">
+                                <span class="text-[10px] text-slate-400">${timeNow}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                chatMessages.insertAdjacentHTML('beforeend', replyHTML);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1000);
+        });
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+    </script>
+</body>
+</html>
